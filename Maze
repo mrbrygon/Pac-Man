@@ -1,0 +1,24 @@
+import javax.swing.JFrame;
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.imageio;
+
+public Maze {
+
+    public static void main(String[] args) {
+
+        File file = new File("PacMan Background.jpg");
+        Image img = new Image()
+    }
+
+    public static void render(File file) {
+        
+
+
+
+
+    }
+
+
+}

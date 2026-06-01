@@ -11,10 +11,10 @@ public class GraphicsDemo1 extends Canvas
 		g.setColor(Color.blue);
 		g.fillRect(200,400,200,20); // a filled-in rectangle
 		g.drawOval(200,430,200,100);
-      g.drawLine(0, 0, 100, 100);
-      g.setColor(Color.yellow);//resets the color
-      g.drawLine(0, 300, 800, 300); // a line
-		
+		g.drawLine(0, 0, 100, 100);
+		g.setColor(Color.yellow);//resets the color
+		g.drawLine(0, 300, 800, 300); // a line
+			
 		g.setColor(Color.black);
 		g.drawString("Graphics are pretty neat.", 500, 100);
 		int x = getWidth() / 2;
@@ -24,6 +24,8 @@ public class GraphicsDemo1 extends Canvas
 
 	public static void main( String[] args )
 	{
+
+		System.setProperty("sun.java2d.xrender", "false");
 		// You can change the title or size here if you want.
 		JFrame win = new JFrame("GraphicsDemo1");
 		win.setSize(800,600);
@@ -31,6 +33,8 @@ public class GraphicsDemo1 extends Canvas
 		GraphicsDemo1 canvas = new GraphicsDemo1();
 		win.add( canvas );
 		win.setVisible(true);
+
+		canvas.repaint();
 	}
 }
 // answer to question 1
