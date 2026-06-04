@@ -1,0 +1,65 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.util.HashSet;
+import java.util.Random;
+import javax.swing.*;
+
+
+
+public class Player {
+
+	String[][] mapImage;
+	private int xPixel;
+	private int yPixel;
+	
+	private Image image;
+	private int width = 32;
+	private int height = 32;
+	
+	
+	String[][] imageAnimations =
+	{
+		{"DownFrame1.png", "DownFrame2.png"},
+		{"LeftFrame1.png", "LeftFrame2.png"},
+		{"RightFrame1.png", "RightFrame2.png"},
+		{"UpFrame1.png", "UpFrame2.png"}
+	};
+	
+	int[] frameNumb = {2, 0};
+	
+	
+	public Player(String[][] mapImage) {
+		this.mapImage = mapImage;
+		this.image = new ImageIcon("./Images/" + imageAnimations[frameNumb[0]][frameNumb[1]]).getImage();
+		
+		boolean isFinished = false;
+		
+		for (int i = 0; i < mapImage.length && !isFinished; i++) {
+			for (int j = 0; j < mapImage[0].length; j++) {
+				if (mapImage[i][j].equals("P")) {
+					this.xPixel = j * 32;
+					this.yPixel = i * 32;
+					isFinished = true;
+					break;
+				}
+			}
+		}
+		
+	}
+	
+	public void drawPlayer(Graphics g, Component canvas) {
+		g.drawImage(this.image, this.xPixel, this.yPixel, this.width, this.height, canvas);
+	}
+	
+	public void swapImage() {
+		if (frameNumb[1] == 1) {
+			frameNumb[1] = 0;
+			this.image = new ImageIcon("./Images/" + imageAnimations[frameNumb[0]][frameNumb[1]]).getImage();
+		}
+		else {
+			frameNumb[1] = 1;
+			this.image = new ImageIcon("./Images/" + imageAnimations[frameNumb[0]][frameNumb[1]]).getImage();
+		}
+	}
+	
+}
