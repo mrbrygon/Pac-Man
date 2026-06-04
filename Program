@@ -1,0 +1,30 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.util.HashSet;
+import java.util.Random;
+import javax.swing.*;
+
+public class Program extends JFrame{
+	
+	private static final long serialVersionUID = 1L;
+
+	public Program() {
+		
+		this.setTitle("Pacman");
+		this.setResizable(false);
+
+		Wall maze = new Wall();
+		
+		this.add(maze);
+		
+		this.pack();
+		
+		this.setLocationRelativeTo(null);		
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		this.setVisible(true);
+		this.requestFocusInWindow();
+	}
+	
+}
