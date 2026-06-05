@@ -6,17 +6,18 @@ import java.awt.event.KeyEvent;
 import java.util.concurrent.TimeUnit;
 
 public class PacMan extends AbstractAction {
+	private String[][] tileMap;
 	private ImageIcon upIcon;
 	private ImageIcon downIcon;
 	private ImageIcon leftIcon;
 	private ImageIcon rightIcon;
 	private JLabel PacMan;
-	private int x = 250;
-	private int y = 250;
+	private int x = 8;
+	private int y = 10;
 	private String movementType = "up";
 	private boolean gameComplete = false;
 	
-	public PacMan(int size) {
+	public PacMan(String[][] mapImage) {
 		URL upUrl = PacMan.class.getResource("PacManGifUp.gif");
         upIcon = new ImageIcon(upUrl);
 		URL downUrl = PacMan.class.getResource("PacManGifDown.gif");
@@ -26,8 +27,25 @@ public class PacMan extends AbstractAction {
 		URL rightUrl = PacMan.class.getResource("PacManGifRight.gif");
         rightIcon = new ImageIcon(rightUrl);
         PacMan = new JLabel(upIcon);
+        boolean isFinished = false;
+		for (int i = 0; i < mapImage.length && !isFinished; i++) {
+			for (int j = 0; j < mapImage[0].length; j++) {
+				if (mapImage[i][j].equals("P")) {
+					x = i;
+					y = j;
+					isFinished = true;
+					break;
+				}
+			}
+		}
+        this.tileMap = mapImage;
 	}
 	public void move() throws InterruptedException {
+		boolean moveUpAgain = false;
+		boolean moveDownAgain = false;
+		boolean moveLeftAgain = false;
+		boolean moveRightAgain = false;
+		
 		InputMap im = PacMan.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		im.put(KeyStroke.getKeyStroke("UP"), "moveUp");
 		im.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
@@ -39,31 +57,37 @@ public class PacMan extends AbstractAction {
 		am.put("moveLeft", leftAction);
 		am.put("moveRight", rightAction);
 		while (!gameComplete) {
-			TimeUnit.MILLISECONDS.sleep(100);
-			if (movementType.equals("up")) {
-				y -= 10;
-				PacMan.setBounds(x, y, 32, 32);
-				System.out.println(movementType);
+			TimeUnit.MILLISECONDS.sleep(200);
+			if (movementType.equals("up") && canMove("up")) {
+				for (int i = 1; i <= 4; i++) {
+					PacMan.setBounds(x * 32, y * 32 - i * 8, 32, 32);
+				}
+				y -= 1;
 			}
-			if (movementType.equals("down")) {
-				y += 10;
-				PacMan.setBounds(x, y, 32, 32); 
-				System.out.println(movementType);
+			if (movementType.equals("down") && canMove("down")) {
+				for (int i = 1; i <= 4; i++) {
+					PacMan.setBounds(x * 32, y * 32 + i * 8, 32, 32);
+				}
+				y += 1;
 			}
-			if (movementType.equals("left")) {
-				x -= 10;
-				PacMan.setBounds(x, y, 32, 32); 
-				System.out.println(movementType);
+			if (movementType.equals("left") && canMove("left")) {
+				for (int i = 1; i <= 4; i++) {
+					PacMan.setBounds(x * 32 - i * 8, y * 32, 32, 32);
+				}
+				x -= 1;
 			}
-			if (movementType.equals("right")) {
-				x += 10;
-				PacMan.setBounds(x, y, 32, 32); 
-				System.out.println(movementType);
+			if (movementType.equals("right") && canMove("right")) {
+				for (int i = 1; i <= 4; i++) {
+					PacMan.setBounds(x * 32 + i * 8, y * 32, 32, 32);
+				}
+				x += 1;
 			}		
 		}
 		return;
 	}
-	
+	public void stop() {
+		movementType = null;
+	}
 	Action upAction = new AbstractAction() {
 	    public void actionPerformed(ActionEvent e) {
 	    		movementType = "up";
@@ -103,4 +127,31 @@ public class PacMan extends AbstractAction {
 		// TODO Auto-generated method stub
 		
 	}
+	public boolean canMove(String movementType) {
+		if (movementType.equals("up")) {
+			if (tileMap[x][y - 1].equals("X")) {
+				return false;
+			}
+			return true;
+		}
+		if (movementType.equals("down")) {
+			if (tileMap[x][y+1].equals("X")) {
+				return false;
+			}
+			return true;
+		}
+		if (movementType.equals("left")) {
+			if (tileMap[x - 1][y].equals("X")) {
+				return false;
+			}
+			return true;
+		}
+		else {
+			if (tileMap[x + 1][y].equals("X")) {
+				return false;
+			}
+			return true;
+		}
+	}
+	
 }
