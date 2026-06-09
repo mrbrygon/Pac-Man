@@ -1,25 +1,22 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashSet;
-import java.util.Random;
 import javax.swing.*;
-
-
 
 public class Wall extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
-	private Timer gameTimer = new Timer(16, this);
-	private int totalTicks = 0;
 	
 	private int width = 32;
 	private int height = 32;
 	private Image image = new ImageIcon("./Images/wall.png").getImage();
 	
+	private String isReplay = "false";
+	
 	private int rowCount = 21;
 	private int columnCount = 19;
 	private int boardWidth = columnCount * this.width;
 	private int boardHeight = rowCount * this.height;
+	private int playerScore = 0;
 	
 	private String[][] mapImage = 
 	{
@@ -30,11 +27,11 @@ public class Wall extends JPanel implements ActionListener{
 		{"X", " ", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", " ", "X"},
 		{"X", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", "X"},
 		{"X", "X", "X", "X", " ", "X", "X", "X", "X", " ", "X", "X", "X", "X", " ", "X", "X", "X", "X"},
-		{" ", " ", " ", "X", " ", "X", " ", " ", " ", " ", " ", " ", " ", "X", " ", "X", " ", " ", " "},
+		{"O", "O", "O", "X", " ", "X", " ", " ", " ", " ", " ", " ", " ", "X", " ", "X", "O", "O", "O"},
 		{"X", "X", "X", "X", " ", "X", " ", "X", "X", " ", "X", "X", " ", "X", " ", "X", "X", "X", "X"},
 		{"X", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X"},
 		{"X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X"},
-		{" ", " ", " ", "X", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " "},
+		{"O", "O", "O", "X", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", " ", "X", "O", "O", "O"},
 		{"X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X", "X", " ", "X", " ", "X", "X", "X", "X"},
 		{"X", " ", " ", " ", " ", " ", " ", " ", " ", "X", " ", " ", " ", " ", " ", " ", " ", " ", "X"},
 		{"X", " ", "X", "X", " ", "X", "X", "X", " ", "X", " ", "X", "X", "X", " ", "X", "X", " ", "X"},
@@ -47,26 +44,50 @@ public class Wall extends JPanel implements ActionListener{
 		
 	};
 	
-	Player pacMan;
+	private PacMan pacMan;
 	
 	public Wall() {
 		this.setPreferredSize(new Dimension(this.boardWidth, this.boardHeight));
 		this.setBackground(Color.black);
+		this.setLayout(null);
 		this.setFocusable(true);
-		this.pacMan = new Player(mapImage);		
-		this.gameTimer.start();
+		this.pacMan = new PacMan(mapImage);	
+		this.add(this.pacMan.getLabel());
 	}
 	
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		this.loadMaze(g);
-		this.pacMan.drawPlayer(g, this);
+		this.loadMazeAndPoints(g);
 		
-	
+		g.setColor(Color.white);
+		
+		
+		String currentScore = String.valueOf(this.pacMan.getScore());
+		g.drawString("Score: " + currentScore, 16, 16);
+
+		if (this.pacMan.getScore() >= 15) {
+			g.setColor(Color.black);
+			
+			FontMetrics metrics = g.getFontMetrics();
+			
+			
+			String won = "You Win!";
+			
+			g.fillRect(0, 0, this.boardWidth, this.boardHeight);
+			Font simpleFont = new Font("Times New Roman", Font.PLAIN + Font.BOLD, 40);
+			g.setColor(Color.white);
+			g.setFont(simpleFont);
+			g.drawString(won, (this.boardWidth - metrics.stringWidth(won)) / 2 - metrics.stringWidth(won), this.boardHeight / 2);
+			simpleFont = new Font("Times New Roman", Font.PLAIN + Font.BOLD, 20);
+			g.setFont(simpleFont);
+			
+		}
+		
+		this.repaint();
 	}
 	
-	public void loadMaze(Graphics g) {
+	public void loadMazeAndPoints(Graphics g) {
 		for (int i = 0; i < rowCount; i++) {
 			for (int j = 0; j < columnCount; j++) {
 				if (mapImage[i][j].equals("X")) {
@@ -77,6 +98,14 @@ public class Wall extends JPanel implements ActionListener{
 					g.drawImage(this.image, pixelX, pixelY, this.width, this.height, this);
 				}
 				
+				if (mapImage[i][j].equals(" ")) {
+					int pixelX = (j * 32) + (32 / 2);
+					int pixelY = (i * 32) + (32/ 2);
+					
+					g.setColor(Color.white);
+					
+					g.fillRect(pixelX, pixelY, 2, 2);
+				}
 			}
 		}
 	}
@@ -84,22 +113,16 @@ public class Wall extends JPanel implements ActionListener{
 	public String[][] getMap() {
 		return this.mapImage;
 	}
-	
-	
-	public void actionPerformed(ActionEvent e) {
-		
-		this.totalTicks++;
-		
-		this.updateGameLogic();
-		
+	public PacMan getPacMan() {
+		return pacMan;
+	}
+
+	public void actionPerformed(ActionEvent e) {	
 		this.repaint();
 	}
 	
-	private void updateGameLogic() {
-		if (this.totalTicks % 4 == 0) {
-		this.pacMan.swapImage();
-		}
-		
+	public void getScore(int score) {
+		this.playerScore = score;
 	}
 	
     
